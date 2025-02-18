@@ -18,7 +18,11 @@ int main(int argc, char *argv[]){
         return 1;
     }
     std::size_t n=std::atoi(argv[1]);
-   
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+ 
+    std::uniform_real_distribution<> dis(-1.0, 1.0); 
     //int n=100;
 
     high_resolution_clock::time_point start;
@@ -28,7 +32,8 @@ int main(int argc, char *argv[]){
     float* arr=(float*)malloc(n*sizeof(float));
     float* output=(float*)malloc(n*sizeof(float));
     for (std::size_t i=0; i<n; i++){
-        arr[i]=(-1)+static_cast<float> (rand()) / (static_cast <float> (RAND_MAX/(1-(-1))));
+        //arr[i]=(-1)+static_cast<float> (rand()) / (static_cast <float> (RAND_MAX/(1-(-1))));
+        arr[i]=dis(gen);
     }
 
 
