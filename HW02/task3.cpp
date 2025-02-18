@@ -31,10 +31,10 @@ int main(int argc, char *argv[]){
     double C[n*n];
     
     for (unsigned int i=0; i<n*n; i++){
-        A[i]=(0)+static_cast<double> (rand()) / (static_cast <double> (RAND_MAX/(1-(0))));
+        A[i]=dis(gen);
     }
     for (unsigned int j=0; j<n*n; j++){
-        B[j]=(0)+static_cast<double> (rand()) / (static_cast <double> (RAND_MAX/(1-(0))));
+        B[j]=dis(gen);
     }
    
     fill(C, C + n * n, 0.0);
