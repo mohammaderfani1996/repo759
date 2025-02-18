@@ -1,6 +1,7 @@
 #include "scan.h"
 #include<iostream>
 #include<vector>
+#include <random>
 using namespace std;
 
 #include <chrono>
