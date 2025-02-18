@@ -15,6 +15,9 @@ int main(int argc, char *argv[]){
         return 1;
     }
     unsigned int n=1200;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0,1.0);
     high_resolution_clock::time_point start;
     high_resolution_clock::time_point end;
     duration<double, milli> duration_sec_mul1;
