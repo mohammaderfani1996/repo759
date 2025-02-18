@@ -1,7 +1,7 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-#include "matmul.cpp"
+#include "matmul.h"
 #include <chrono>
 #include <ratio>
 #include <cmath>
