@@ -16,7 +16,8 @@ int main(int argc, char *argv[]){
         cerr << "There is an error with an argument" << std::endl;
         return 1;
     }
-    unsigned long n=std::atoi(argv[1]);
+    std::size_t n=std::atoi(argv[1]);
+   
     //int n=100;
 
     high_resolution_clock::time_point start;
