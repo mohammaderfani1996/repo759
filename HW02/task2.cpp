@@ -2,7 +2,7 @@
 #include<iostream>
 #include<vector>
 using namespace std;
-
+#include <random>
 #include <chrono>
 #include <ratio>
 #include <cmath>
