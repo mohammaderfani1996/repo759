@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
         cerr << "There is an error with an argument" << std::endl;
         return 1;
     }
-    int n=1200;
+    unsigned int n=1200;
     high_resolution_clock::time_point start;
     high_resolution_clock::time_point end;
     duration<double, milli> duration_sec_mul1;
@@ -27,10 +27,10 @@ int main(int argc, char *argv[]){
     double B[n*n];
     double C[n*n];
     
-    for (int i=0; i<n*n; i++){
+    for (unsigned int i=0; i<n*n; i++){
         A[i]=(0)+static_cast<double> (rand()) / (static_cast <double> (RAND_MAX/(1-(0))));
     }
-    for (int j=0; j<n*n; j++){
+    for (unsigned int j=0; j<n*n; j++){
         B[j]=(0)+static_cast<double> (rand()) / (static_cast <double> (RAND_MAX/(1-(0))));
     }
    
