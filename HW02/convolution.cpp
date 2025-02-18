@@ -11,13 +11,13 @@ using namespace std;
 #include "convolution.h"
 
 void convolve(const float *image, float *output, std::size_t n, const float *mask, std::size_t m){
-    int row_index;
-    int col_index;
-    for(int x=0; x<n; x++){
-        for (int y=0; y<n; y++){
+    std::size_t row_index;
+    std::size_t col_index;
+    for(std::size_t x=0; x<n; x++){
+        for (std::size_t y=0; y<n; y++){
             float sum=0;
-            for (int i=0; i< m; i++){
-                for (int j=0; j<m;j++){
+            for (std::size_t i=0; i< m; i++){
+                for (std::size_t j=0; j<m;j++){
                     row_index=x+i-(m-1)/2;
                     col_index=y+j-(m-1)/2;
                     if((row_index>=n || row_index<0) || (col_index>=n || col_index<0)){
