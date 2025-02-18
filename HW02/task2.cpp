@@ -15,8 +15,8 @@ int main(int argc, char *argv[]){
         cerr << "There is an error with an argument" << std::endl;
         return 1;
     }
-    int n=std::atoi(argv[1]);
-    int m=std::atoi(argv[2]);
+    std::size_t n=std::atoi(argv[1]);
+    std::size_t m=std::atoi(argv[2]);
     //int n=4;
     //int m=3;
     high_resolution_clock::time_point start;
@@ -26,10 +26,10 @@ int main(int argc, char *argv[]){
     float* image=new float[n*n];
     float* mask=new float[m*m];
     float* output=new float[n*n];
-    for (int i=0; i<n*n; i++){
+    for (std::size_t i=0; i<n*n; i++){
         image[i]=(-10)+static_cast<float> (rand()) / (static_cast <float> (RAND_MAX/(10-(-10))));
     }
-    for (int j=0; j<m*m; j++){
+    for (std::size_t j=0; j<m*m; j++){
         mask[j]=(-1)+static_cast<float> (rand()) / (static_cast <float> (RAND_MAX/(1-(-1))));
     }
    
