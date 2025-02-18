@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
         cerr << "There is an error with an argument" << std::endl;
         return 1;
     }
-    int n=200;
+    int n=1200;
     high_resolution_clock::time_point start;
     high_resolution_clock::time_point end;
     duration<double, milli> duration_sec_mul1;
