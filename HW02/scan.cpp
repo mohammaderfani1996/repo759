@@ -13,9 +13,9 @@ using namespace std;
 
 void scan(const float *arr, float *output, std::size_t n){
    
-    for (int i=0; i<n; i++){
+    for (std::size_t i=0; i<n; i++){
         float sum=0;
-        for (int j=0; j<=i; j++){
+        for (std::size_t j=0; j<=i; j++){
             sum=sum+(arr[j]);
         }
         output[i]=sum;
