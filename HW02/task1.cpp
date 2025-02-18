@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
 
     float* arr=(float*)malloc(n*sizeof(double));
     float* output=(float*)malloc(n*sizeof(double));
-    for (int i=0; i<n; i++){
+    for (std::size_t i=0; i<n; i++){
         arr[i]=(-1)+static_cast<float> (rand()) / (static_cast <float> (RAND_MAX/(1-(-1))));
     }
 
