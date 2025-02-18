@@ -1,8 +1,8 @@
-#include "scan.cpp"
+#include "scan.h"
 #include<iostream>
 #include<vector>
 using namespace std;
-#include "matmul.cpp"
+
 #include <chrono>
 #include <ratio>
 #include <cmath>
