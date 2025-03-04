@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
     std::size_t n=std::atoi(argv[1]);
     int t=std::atoi(argv[2]);
     std::size_t m=3;
-    std::printf("I can go w/ this many threads:%d\n", omp_get_max_threads());
+    //std::printf("I can go w/ this many threads:%d\n", omp_get_max_threads());
     omp_set_num_threads(t);
     //int n=4;
     //int m=3;
