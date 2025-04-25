@@ -10,7 +10,7 @@
 
 const double timeBatchSize = 1.0; // Time batch size in seconds
 
-void BatchCPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) {
+void BatchCPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int _, double tolerance, std::vector<LikelyCollision> &collisions) {
     if(currentSortedSats == NULL) {
         // printf("Allocating currentSortedSats\n");
         // fflush(stdout);
