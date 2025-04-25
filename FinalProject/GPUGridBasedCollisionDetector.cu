@@ -141,7 +141,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     //Assign each satellites to grid
     GridEntry *d_entries;
     cudaMalloc(&d_entries, sizeof(GridEntry) * nSats);
-    assignSatellitesToGrid<<<(nSats + 255)/256, 256>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
+    assignSatellitesToGrid<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
 
     //Sort grid entries
     thrust::device_ptr<int> keys((int*)&d_entries[0].gridHash);
@@ -156,7 +156,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMemset(d_cellStarts, -1, sizeof(int) * gridSize);
     cudaMemset(d_cellEnds, -1, sizeof(int) * gridSize);
 
-    fillCellBounds<<<(nSats + 255)/256, 256>>>(d_cellStarts, d_cellEnds, d_entries, nSats);
+    fillCellBounds<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_cellStarts, d_cellEnds, d_entries, nSats);
 
     //Allocate memory for collisions
     int maxCollisions = nSats * 10;
@@ -167,7 +167,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMemset(d_numCollisions, 0, sizeof(int));
 
     // detection kernel
-    detectCollisions<<<(gridSize + 255)/256, 256>>>(d_sats, d_entries, d_cellStarts, d_cellEnds,
+    detectCollisions<<<(gridSize + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, d_cellStarts, d_cellEnds,
         gridDims, origin, GRID_CELL_SIZE, tolerance, d_collisions, d_numCollisions, maxCollisions, t);
 
     // back collisions to the host
