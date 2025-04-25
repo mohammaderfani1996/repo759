@@ -10,7 +10,7 @@ public:
     ~GPUGridBasedCollisionDetector() {}
     void getLikelyCollisions(SphericalSatellite sats[], int nSats,
                              SphericalSatellite possibleColliders[], int nPossibleColliders,
-                             double t, double tolerance,
+                             double t, int threads_per_block, double tolerance,
                              std::vector<LikelyCollision> &collisions) override;
 };
 
