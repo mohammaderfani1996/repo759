@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
                 possibleColliders = new SphericalSatellite[numPossibleColliders];
                 std::copy(colliderSet.begin(), colliderSet.end(), possibleColliders);
             }
-            collisionDetector->getLikelyCollisions(satellites, N, possibleColliders, numPossibleColliders, t, 1e-6, collisions);
+            collisionDetector->getLikelyCollisions(satellites, N, possibleColliders, numPossibleColliders, t,num_threads, 1e-6, collisions);
             if (t < highestTimeReached) {
                 delete[] possibleColliders;
             }
