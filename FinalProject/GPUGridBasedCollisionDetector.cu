@@ -113,6 +113,7 @@ __global__ void detectCollisions(const SphericalSatellite *d_sats, const GridEnt
 
 //GPUGridBasedCollisionDetector
 
+
 void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats,
     SphericalSatellite[], int, double t, int threads_per_block, double tolerance, std::vector<LikelyCollision> &collisions) {
 
