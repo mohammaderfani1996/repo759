@@ -8,6 +8,8 @@
 #include "utils.cuh"
 #include "CollisionDetectionDevice.cuh"
 
+#define THREADS_PER_BLOCK (32)
+
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true) {
     if (code != cudaSuccess) {
@@ -64,6 +66,7 @@ __global__ void sortBasedCollisionDetectorKernel(SphericalSatellite * d_sats,
     
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     
+    d_hadCollision[idx] = 0;
     if (idx < nSats - 1)
     {
         CartesianCoordinates pos1 = d_sats[idx].pos;
@@ -109,7 +112,7 @@ __global__ void condenseCollisionArrayA(int * d_hadCollision, int * d_hadCollisi
 }
 
 void GPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, 
-    SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, 
+    SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int num_threads, double tolerance, 
     std::vector<LikelyCollision> &collisions) {
     collisions.clear(); // Clear previous collisions
     
@@ -162,17 +165,18 @@ void GPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     // Call detection kernel to set:
     //   - d_hadCollision (1/0)
     //   - d_collisions (sparse array)
-    sortBasedCollisionDetectorKernel<<<(nSats + 127)/128, 128>>>(d_sats, nSats, d_hadCollision, 
+    sortBasedCollisionDetectorKernel<<<(nSats + THREADS_PER_BLOCK-1)/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_sats, nSats, d_hadCollision, 
             tolerance, d_collisionIndices, maxDistance, t);
 
     CHECK_ERROR();
+
     // Exclusive scan of d_hadCollision (note, this will give us # collisions as last index)
-    thrust::exclusive_scan(d_hadCollision, d_hadCollision + nSats2, d_hadCollisionScan);
+    thrust::exclusive_scan(thrust::device, d_hadCollision, d_hadCollision + nSats2, d_hadCollisionScan);
 
     CHECK_ERROR();
     // Condense the array: 
     //   - if d_hadCollision[i], store d_collisions[i] to dense array at index d_hadCollisionScan[i]
-    condenseCollisionArrayA<<<(nSats + 127)/128, 128>>>(d_hadCollision, 
+    condenseCollisionArrayA<<<(nSats + THREADS_PER_BLOCK-1)/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_hadCollision, 
             d_hadCollisionScan, d_collisionIndices, d_collisionIndicesDense, nSats);
 
     CHECK_ERROR();
