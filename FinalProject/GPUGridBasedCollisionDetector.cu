@@ -146,10 +146,20 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMalloc(&d_entries, sizeof(GridEntry) * nSats);
     assignSatellitesToGrid<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
     cudaDeviceSynchronize();
-    //Sort grid entries
-    thrust::device_ptr<int> keys((int*)&d_entries[0].gridHash);
-    thrust::device_ptr<int> values((int*)&d_entries[0].satIdx);
-    thrust::sort_by_key(keys, keys + nSats, values);
+      // Step 4: Sort grid entries
+    // Allocate device vector for GridEntry structs
+    thrust::device_vector<GridEntry> entries_device(nSats);
+    cudaMemcpy(thrust::raw_pointer_cast(entries_device.data()), d_entries, sizeof(GridEntry) * nSats, cudaMemcpyDeviceToDevice);
+
+    // Sort GridEntry structs by gridHash using a lambda comparator
+    thrust::sort(entries_device.begin(), entries_device.end(),
+        [] __host__ __device__ (const GridEntry &a, const GridEntry &b) {
+            return a.gridHash < b.gridHash;
+        });
+
+    // Copy back to raw pointer
+    cudaMemcpy(d_entries, thrust::raw_pointer_cast(entries_device.data()), sizeof(GridEntry) * nSats, cudaMemcpyDeviceToDevice);
+
 
     // Compute cell starts/ends based on hash calcualtion
     int gridSize = gridDims.x * gridDims.y * gridDims.z;
