@@ -8,6 +8,8 @@
 #include "defs.hpp"
 #include "GPUGridBasedCollisionDetector.cuh"
 #include "utils.cuh"
+#include <thrust/scan.h>
+
 
 const double GRID_CELL_SIZE = 2 * satRadius + DISTANCE_STD_DEV;
 
