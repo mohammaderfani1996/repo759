@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
 
     // Check if correct number of arguments are provided
-    if (argc < 13) {
+    if (argc < 6) {
         std::cerr << "Usage: " << argv[0] << "<number_of_satellites> <simulation_end_time> <num_threads> <random_seed> <frame_sampling_interval> flags" << std::endl;
         std::cerr << "Flags: --force-collision --p-kick-drift --p-naive-cpu --p-naive-gpu --p-cpu-sort --p-batch-cpu-sort --p-gpu-sort --p-gpu-grid --p-cpu-grid --p-cpu-bubble-sort --disable-maneuvers --disable-print-collisions" << std::endl;
         return 1;
