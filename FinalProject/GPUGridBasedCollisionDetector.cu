@@ -176,6 +176,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     // back collisions to the host
     int h_numCollisions;
     cudaMemcpy(&h_numCollisions, d_numCollisions, sizeof(int), cudaMemcpyDeviceToHost);
+    printf("h_numCollisions %d", h_numCollisions);
     std::vector<LikelyCollisionByIdx> temp(h_numCollisions);
     cudaMemcpy(temp.data(), d_collisions, sizeof(LikelyCollisionByIdx) * h_numCollisions, cudaMemcpyDeviceToHost);
 
