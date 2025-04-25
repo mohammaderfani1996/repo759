@@ -142,7 +142,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     GridEntry *d_entries;
     cudaMalloc(&d_entries, sizeof(GridEntry) * nSats);
     assignSatellitesToGrid<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
-
+    cudaDeviceSynchronize();
     //Sort grid entries
     thrust::device_ptr<int> keys((int*)&d_entries[0].gridHash);
     thrust::device_ptr<int> values((int*)&d_entries[0].satIdx);
@@ -157,7 +157,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMemset(d_cellEnds, -1, sizeof(int) * gridSize);
 
     fillCellBounds<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_cellStarts, d_cellEnds, d_entries, nSats);
-
+    cudaDeviceSynchronize();
     //Allocate memory for collisions
     int maxCollisions = nSats * 10;
     LikelyCollisionByIdx *d_collisions;
@@ -169,6 +169,7 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     // detection kernel
     detectCollisions<<<(gridSize + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, d_cellStarts, d_cellEnds,
         gridDims, origin, GRID_CELL_SIZE, tolerance, d_collisions, d_numCollisions, maxCollisions, t);
+    cudaDeviceSynchronize();
 
     // back collisions to the host
     int h_numCollisions;
