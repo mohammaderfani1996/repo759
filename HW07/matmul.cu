@@ -7,7 +7,7 @@
 
 __global__ void Muld_float(const float* A,const float* B, float* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ float shared[];
+    extern __shared__ float tile_mem[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
@@ -48,7 +48,7 @@ __global__ void Muld_float(const float* A,const float* B, float* C, unsigned int
 
 __global__ void Muld_int(const int* A,const int* B, int* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ int shared[];
+    extern __shared__ int tile_mem[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
@@ -88,7 +88,7 @@ __global__ void Muld_int(const int* A,const int* B, int* C, unsigned int n, unsi
 
 __global__ void Muld_doub(const double* A,const double* B, double* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ double shared[];
+    extern __shared__ double tile_mem[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
