@@ -7,15 +7,15 @@
 
 __global__ void Muld_float(const float* A,const float* B, float* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ float tile_mem[];
+    extern __shared__ float tile_mem_f[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
     // Thread index
     int tx = threadIdx.x; //the column index in the sub-block
     int ty = threadIdx.y; //the row index in the sub-block
-    float* As=tile_mem;
-    float* Bs=tile_mem + block_dim*block_dim;
+    float* As=tile_mem_f;
+    float* Bs=tile_mem_f + block_dim*block_dim;
     int row = by * block_dim + ty;
     int col = bx * block_dim + tx;
 
@@ -48,15 +48,15 @@ __global__ void Muld_float(const float* A,const float* B, float* C, unsigned int
 
 __global__ void Muld_int(const int* A,const int* B, int* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ int tile_mem[];
+    extern __shared__ int tile_mem_int[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
     // Thread index
     int tx = threadIdx.x; //the column index in the sub-block
     int ty = threadIdx.y; //the row index in the sub-block
-    int* As=tile_mem;
-    int* Bs=tile_mem + block_dim*block_dim;
+    int* As=tile_mem_int;
+    int* Bs=tile_mem_int + block_dim*block_dim;
     int row = by * block_dim + ty;
     int col = bx * block_dim + tx;
 
@@ -88,15 +88,15 @@ __global__ void Muld_int(const int* A,const int* B, int* C, unsigned int n, unsi
 
 __global__ void Muld_doub(const double* A,const double* B, double* C, unsigned int n, unsigned int block_dim)
 {
-    extern __shared__ double tile_mem[];
+    extern __shared__ double tile_mem_doub[];
     // Block index
     int bx = blockIdx.x; //the B (and C) matrix sub-block column index
     int by = blockIdx.y; //the A (and C) matrix sub-block row index
     // Thread index
     int tx = threadIdx.x; //the column index in the sub-block
     int ty = threadIdx.y; //the row index in the sub-block
-    double* As=tile_mem;
-    double* Bs=tile_mem + block_dim*block_dim;
+    double* As=tile_mem_doub;
+    double* Bs=tile_mem_doub + block_dim*block_dim;
     int row = by * block_dim + ty;
     int col = bx * block_dim + tx;
 
