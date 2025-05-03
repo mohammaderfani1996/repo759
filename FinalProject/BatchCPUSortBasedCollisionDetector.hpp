@@ -12,7 +12,7 @@ class BatchCPUSortBasedCollisionDetector : public CollisionDetector {
     public:
         BatchCPUSortBasedCollisionDetector() {}
         ~BatchCPUSortBasedCollisionDetector() {}
-        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) override;
+        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int _, double tolerance, std::vector<LikelyCollision> &collisions) override;
 };
 
 #endif

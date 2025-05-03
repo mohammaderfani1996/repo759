@@ -8,6 +8,8 @@
 #include "defs.hpp"
 #include "GPUGridBasedCollisionDetector.cuh"
 #include "utils.cuh"
+#include <thrust/scan.h>
+
 
 const double GRID_CELL_SIZE = 2 * satRadius + DISTANCE_STD_DEV;
 
@@ -110,8 +112,10 @@ __global__ void detectCollisions(const SphericalSatellite *d_sats, const GridEnt
 }
 
 //GPUGridBasedCollisionDetector
+
+
 void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats,
-    SphericalSatellite[], int, double t, double tolerance, std::vector<LikelyCollision> &collisions) {
+    SphericalSatellite[], int, double t, int threads_per_block, double tolerance, std::vector<LikelyCollision> &collisions) {
 
     //Calculate bounding box
     CartesianCoordinates min = sats[0].pos;
@@ -140,12 +144,22 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     //Assign each satellites to grid
     GridEntry *d_entries;
     cudaMalloc(&d_entries, sizeof(GridEntry) * nSats);
-    assignSatellitesToGrid<<<(nSats + 255)/256, 256>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
+    assignSatellitesToGrid<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, origin, GRID_CELL_SIZE, gridDims, nSats);
+    cudaDeviceSynchronize();
+      // Step 4: Sort grid entries
+    // Allocate device vector for GridEntry structs
+    thrust::device_vector<GridEntry> entries_device(nSats);
+    cudaMemcpy(thrust::raw_pointer_cast(entries_device.data()), d_entries, sizeof(GridEntry) * nSats, cudaMemcpyDeviceToDevice);
 
-    //Sort grid entries
-    thrust::device_ptr<int> keys((int*)&d_entries[0].gridHash);
-    thrust::device_ptr<int> values((int*)&d_entries[0].satIdx);
-    thrust::sort_by_key(keys, keys + nSats, values);
+    // Sort GridEntry structs by gridHash using a lambda comparator
+    thrust::sort(entries_device.begin(), entries_device.end(),
+        [] __host__ __device__ (const GridEntry &a, const GridEntry &b) {
+            return a.gridHash < b.gridHash;
+        });
+
+    // Copy back to raw pointer
+    cudaMemcpy(d_entries, thrust::raw_pointer_cast(entries_device.data()), sizeof(GridEntry) * nSats, cudaMemcpyDeviceToDevice);
+
 
     // Compute cell starts/ends based on hash calcualtion
     int gridSize = gridDims.x * gridDims.y * gridDims.z;
@@ -155,8 +169,8 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMemset(d_cellStarts, -1, sizeof(int) * gridSize);
     cudaMemset(d_cellEnds, -1, sizeof(int) * gridSize);
 
-    fillCellBounds<<<(nSats + 255)/256, 256>>>(d_cellStarts, d_cellEnds, d_entries, nSats);
-
+    fillCellBounds<<<(nSats + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_cellStarts, d_cellEnds, d_entries, nSats);
+    cudaDeviceSynchronize();
     //Allocate memory for collisions
     int maxCollisions = nSats * 10;
     LikelyCollisionByIdx *d_collisions;
@@ -166,12 +180,14 @@ void GPUGridBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[
     cudaMemset(d_numCollisions, 0, sizeof(int));
 
     // detection kernel
-    detectCollisions<<<(gridSize + 255)/256, 256>>>(d_sats, d_entries, d_cellStarts, d_cellEnds,
+    detectCollisions<<<(gridSize + threads_per_block -1)/threads_per_block, threads_per_block>>>(d_sats, d_entries, d_cellStarts, d_cellEnds,
         gridDims, origin, GRID_CELL_SIZE, tolerance, d_collisions, d_numCollisions, maxCollisions, t);
+    cudaDeviceSynchronize();
 
     // back collisions to the host
     int h_numCollisions;
     cudaMemcpy(&h_numCollisions, d_numCollisions, sizeof(int), cudaMemcpyDeviceToHost);
+    printf("h_numCollisions %d", h_numCollisions);
     std::vector<LikelyCollisionByIdx> temp(h_numCollisions);
     cudaMemcpy(temp.data(), d_collisions, sizeof(LikelyCollisionByIdx) * h_numCollisions, cudaMemcpyDeviceToHost);
 

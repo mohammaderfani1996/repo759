@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "utils.cuh"
 #include "CollisionDetectionDevice.cuh"
-
+#define THREADS_PER_BLOCK (32)
 __global__ void naiveCollisionDetectorKernel(SphericalSatellite * d_sats, 
         int nSats, /*SphericalSatellite * possibleColliders, int nPossibleColliders,*/
         int * d_hadCollision, double tolerance, LikelyCollisionByIdx * d_collisions,
@@ -51,7 +51,7 @@ GPUNaiveCollisionDetector::GPUNaiveCollisionDetector(size_t N)
 }
 
 void GPUNaiveCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, 
-    SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, 
+    SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int num_threads, double tolerance, 
     std::vector<LikelyCollision> &collisions) {
     collisions.clear(); // Clear previous collisions
     int nSats2 = nSats * nSats;
@@ -81,15 +81,15 @@ void GPUNaiveCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], i
     // Call detection kernel to set:
     //   - d_hadCollision (1/0)
     //   - d_collisions (sparse array)
-    naiveCollisionDetectorKernel<<<(nSats + 127)/128, 128>>>(d_sats, nSats, d_hadCollision, 
+    naiveCollisionDetectorKernel<<<(nSats THREADS_PER_BLOCK-1)/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_sats, nSats, d_hadCollision, 
             tolerance, d_collisionIndices, t);
 
     // Exclusive scan of d_hadCollision (note, this will give us # collisions as last index)
-    thrust::exclusive_scan(d_hadCollision, d_hadCollision + nSats2, d_hadCollisionScan);
+    thrust::exclusive_scan(thrust::device,d_hadCollision, d_hadCollision + nSats2, d_hadCollisionScan);
 
     // Condense the array: 
     //   - if d_hadCollision[i], store d_collisions[i] to dense array at index d_hadCollisionScan[i]
-    condenseCollisionArrayB<<<(nSats + 127)/128, 128>>>(d_hadCollision, 
+    condenseCollisionArrayB<<<(nSats THREADS_PER_BLOCK-1)/THREADS_PER_BLOCK, THREADS_PER_BLOCK>>>(d_hadCollision, 
             d_hadCollisionScan, d_collisionIndices, d_collisionIndicesDense, nSats);
 
     // Copy stuff back

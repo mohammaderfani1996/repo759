@@ -9,7 +9,7 @@
 
 
 
-void CPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) {
+void CPUSortBasedCollisionDetector::getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int _, double tolerance, std::vector<LikelyCollision> &collisions) {
     static double checkDistance;
     if(checkDistance == 0) {
         checkDistance = 3 * DISTANCE_STD_DEV;

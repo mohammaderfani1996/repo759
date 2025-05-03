@@ -99,7 +99,7 @@ class CollisionDetector {
             * @param collisions The array of LikelyCollision objects to store the detected collisions.
             * @return number of collisions detected.
          */
-        virtual void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) = 0;
+        virtual void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t,int num_threads, double tolerance, std::vector<LikelyCollision> &collisions) = 0;
     };
 
 class BatchCollisionDetector {

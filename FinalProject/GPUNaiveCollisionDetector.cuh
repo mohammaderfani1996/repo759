@@ -12,7 +12,7 @@ class GPUNaiveCollisionDetector : public CollisionDetector {
         GPUNaiveCollisionDetector() {}
         ~GPUNaiveCollisionDetector() {}
         GPUNaiveCollisionDetector(size_t N);
-        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) override;
+        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t,int num_threads, double tolerance, std::vector<LikelyCollision> &collisions) override;
 };
 
 

@@ -8,7 +8,7 @@ class CPUSortBasedCollisionDetector : public CollisionDetector {
     public:
         CPUSortBasedCollisionDetector() {}
         ~CPUSortBasedCollisionDetector() {}
-        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, double tolerance, std::vector<LikelyCollision> &collisions) override;
+        void getLikelyCollisions(SphericalSatellite sats[], int nSats, SphericalSatellite possibleColliders[], int nPossibleColliders, double t, int _, double tolerance, std::vector<LikelyCollision> &collisions) override;
 };
 
 #endif

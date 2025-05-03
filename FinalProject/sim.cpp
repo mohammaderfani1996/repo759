@@ -126,6 +126,7 @@ int main(int argc, char *argv[]) {
     printf("cpu_sort_based_collision_detector: %d\n", cpu_sort_based);
     printf("gpu_sort_based_collision_detector: %d\n", gpu_sort_based);
     printf("gpu_naive_collision_detector: %d\n", gpu_naive);
+    printf("gpu_sort_based_collision_detector: %d\n", gpu_grid_based);
     printf("batch_cpu_sort_based_collision_detector: %d\n", batch_cpu_sort_based);
     fflush(stdout);
 
@@ -268,7 +269,7 @@ int main(int argc, char *argv[]) {
                 possibleColliders = new SphericalSatellite[numPossibleColliders];
                 std::copy(colliderSet.begin(), colliderSet.end(), possibleColliders);
             }
-            collisionDetector->getLikelyCollisions(satellites, N, possibleColliders, numPossibleColliders, t, 1e-6, collisions);
+            collisionDetector->getLikelyCollisions(satellites, N, possibleColliders, numPossibleColliders, t,num_threads, 1e-6, collisions);
             if (t < highestTimeReached) {
                 delete[] possibleColliders;
             }
